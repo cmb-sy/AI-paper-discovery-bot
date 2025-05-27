@@ -1,0 +1,6 @@
+# config/config.yaml
+
+api_key: "YOUR_API_KEY"
+slack_channel: "#your-slack-channel"
+translation_service: "YOUR_TRANSLATION_SERVICE"
+notification_schedule: "daily"
