@@ -24,7 +24,6 @@ def translate_text(text, dest_lang='ja'):
         return text
 
 def format_paper_for_slack(paper):
-    """論文情報をSlack用にフォーマットする"""
     config = get_config()
     use_translation = config.get('translation', {}).get('enabled', True)
     use_chatgpt = config.get('chatgpt', {}).get('use_chatgpt', False)
@@ -39,6 +38,7 @@ def format_paper_for_slack(paper):
             print_with_timestamp("ChatGPTを使用するため、原文のまま表示します")
             translated_title = title
             translated_summary = summary
+            
         # ChatGPTを使わない場合は設定に基づいて翻訳を行う
         elif use_translation:
             try:
@@ -101,7 +101,6 @@ def format_paper_for_slack(paper):
             }
         ])
         
-        # メッセージを作成
         message = {"blocks": blocks}
         return message
     except Exception as e:

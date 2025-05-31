@@ -11,7 +11,6 @@ from .utils import print_with_timestamp
 config = {}
 
 def load_config():
-    """設定ファイルを読み込み、グローバル変数configにセットする"""
     global config
     dotenv_path = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), '.env')
     if os.path.exists(dotenv_path):
@@ -27,7 +26,6 @@ def load_config():
         sys.exit(1)
 
 def get_config():
-    """設定情報を取得する"""
     if not config:
         return load_config()
     return config

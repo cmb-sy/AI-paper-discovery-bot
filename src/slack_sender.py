@@ -8,17 +8,11 @@ from .config_loader import get_config
 from .utils import print_with_timestamp
 
 def send_to_slack(message):
-    """Slackにメッセージを送信する"""
     config = get_config()
-    
-    # 環境変数名を設定ファイルから取得
     webhook_env_var = config.get('slack', {}).get('webhook_url_env', 'SLACK_WEBHOOK_URL')
-    
-    # 環境変数からWebhook URLを取得
     webhook_url = os.environ.get(webhook_env_var)
     
     try:
-        # URLが設定されているか確認
         if not webhook_url:
             print_with_timestamp(f"Slack webhook URLが環境変数 {webhook_env_var} に設定されていません。.envファイルを確認してください。")
             return None
