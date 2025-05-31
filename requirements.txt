@@ -1,7 +1,8 @@
-requests
-slack_sdk
-googletrans==4.0.0-rc1
-PyYAML
-arxiv
-semanticscholar
+requests>=2.25.0
+slack_sdk>=3.0.0
+googletrans-py>=4.0.0
+PyYAML>=6.0
+arxiv>=1.4.2
+semanticscholar>=0.4.0
 openai>=1.0.0
+python-dotenv>=1.0.0
