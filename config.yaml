@@ -22,8 +22,7 @@ arxiv:
     - "stat.ML" # 機械学習（統計）
   max_results: 100
   filters:
-    # 過去X年以内の論文に絞り込む
-    max_years_old: 5
+    max_years_old: 5 # 過去X年以内の論文に絞り込む
 
     keywords:
       - "transformer"
