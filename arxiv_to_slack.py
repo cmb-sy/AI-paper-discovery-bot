@@ -1,45 +1,29 @@
 import arxiv
 import yaml
-import logging
 from datetime import datetime
 import os
 import sys
-import time
 import random
 from slack_sdk.webhook import WebhookClient
 from slack_sdk.errors import SlackApiError
 from googletrans import Translator
 
-logging.getLogger("httpx").setLevel(logging.WARNING) # 外部ライブラリのロギングを無効化
-
-# ロギングの設定
-logging.basicConfig(
-    level=logging.INFO,
-    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
-    handlers=[
-        logging.FileHandler(os.path.join(os.path.dirname(os.path.abspath(__file__)), 'arxiv_to_slack.log')),
-        logging.StreamHandler()
-    ]
-)
-logger = logging.getLogger('arxiv_to_slack')
+# 現在時刻を取得する関数
+def get_timestamp():
+    return datetime.now().strftime('%Y-%m-%d %H:%M:%S')
 
 # 設定ファイルを読み込む
 CONFIG_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'config.yaml')
 try:
     with open(CONFIG_PATH, 'r') as f:
         config = yaml.safe_load(f)
-    print("設定ファイルを読み込みました: %s", CONFIG_PATH)
+    print(f"{get_timestamp()} - 設定ファイルを読み込みました: {CONFIG_PATH}")
 except Exception as e:
-    print("設定ファイルの読み込みに失敗しました: %s", e)
+    print(f"{get_timestamp()} - 設定ファイルの読み込みに失敗しました: {e}")
     sys.exit(1)
 
 # Slackのwebhook URL（環境変数から取得、なければconfigから）
-SLACK_WEBHOOK_URL = os.environ.get('WEBHOOK_URL', config['slack']['webhook_url'])
-
-# テストモードの確認（GitHub Actionsのpushイベントなどで使用）
-TEST_MODE = os.environ.get('TEST_MODE', 'false').lower() == 'true'
-if TEST_MODE:
-    print("🧪 テストモードで実行しています")
+SLACK_WEBHOOK_URL = "https://hooks.slack.com/services/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"
 
 # ChatGPT設定
 USE_CHATGPT = config.get('chatgpt', {}).get('use_chatgpt', False)
@@ -47,13 +31,16 @@ CHATGPT_API_KEY = config.get('chatgpt', {}).get('api_key', os.environ.get('OPENA
 CHATGPT_MODEL = config.get('chatgpt', {}).get('model', 'gpt-3.5-turbo')
 CHATGPT_TEMPERATURE = config.get('chatgpt', {}).get('temperature', 0.7)
 
+# 翻訳設定
+USE_TRANSLATION = config.get('translation', {}).get('enabled', True)  # デフォルトはTrue
+
 # ChatGPTユーティリティのインポート
 if USE_CHATGPT:
     try:
         from chatgpt_utils import process_paper_with_chatgpt
-        logger.info("ChatGPTモードを有効化しました")
+        print(f"{get_timestamp()} - ChatGPTモードを有効化しました")
     except ImportError:
-        logger.warning("ChatGPTユーティリティをインポートできませんでした。ChatGPTモードは無効になります。")
+        print(f"{get_timestamp()} - ChatGPTユーティリティをインポートできませんでした。ChatGPTモードは無効になります。")
         USE_CHATGPT = False
 
 # 検索する分野（AI関連）
@@ -84,36 +71,23 @@ def contains_keywords(paper):
         return False
         
     title_and_summary = (paper.title + " " + paper.summary).lower()
-    for keyword in KEYWORDS:
-        if keyword.lower() in title_and_summary:
-            return True
-    return False
+    return any(keyword.lower() in title_and_summary for keyword in KEYWORDS)
 
 def filter_papers(papers):
     """論文をフィルタリングする"""
     filtered_papers = []
     original_count = len(papers)
-    logger.info("論文フィルタリングを開始します（%d件）", original_count)
+    print(f"{get_timestamp()} - 論文フィルタリングを開始します（{original_count}件）")
     
-    for paper in papers:
-        # 常に過去X年以内の論文に限定
-        if not is_recent_paper(paper):
-            continue
-            
-        # キーワードフィルタリング（キーワードがある場合）
-        if KEYWORDS and not contains_keywords(paper):
-            continue
-            
-        # 引用数の取得なしで論文を追加
-        filtered_papers.append(paper)
+    filtered_papers = [paper for paper in papers if is_recent_paper(paper) and (not KEYWORDS or contains_keywords(paper))]
     
-    logger.info("フィルタリング完了: %d/%d件が条件を満たしました", 
-             len(filtered_papers), original_count)
+    print(f"{get_timestamp()} - フィルタリング完了: {len(filtered_papers)}/{original_count}件が条件を満たしました")
     
     return filtered_papers
 
 def search_ai_papers():
-    logger.info("ArXivからAI関連の論文の検索を開始します")
+    """ArXivからAI関連の論文を検索する"""
+    print(f"{get_timestamp()} - ArXivからAI関連の論文の検索を開始します")
     try:
         # 最新のarxivライブラリに合わせた実装
         client = arxiv.Client()
@@ -124,7 +98,7 @@ def search_ai_papers():
         # 日付指定は複雑なので、カテゴリのみで検索し、結果数を増やす
         query = f"({category_query})"
         
-        logger.debug("検索クエリ: %s", query)
+        print(f"{get_timestamp()} - 検索クエリ: {query}")
         
         # 検索実行
         search = arxiv.Search(
@@ -134,31 +108,37 @@ def search_ai_papers():
         )
         
         results = list(client.results(search))
-        logger.info("%d件の論文が見つかりました", len(results))
+        print(f"{get_timestamp()} - {len(results)}件の論文が見つかりました")
         
-        # 検索結果をフィルタリング（引用数でのフィルタリングなし）
+        # 検索結果をフィルタリング
         filtered_results = filter_papers(results)
         
         return filtered_results
     except Exception as e:
-        logger.error("論文検索中にエラーが発生しました: %s", e)
+        print(f"{get_timestamp()} - 論文検索中にエラーが発生しました: {e}")
         return []
 
 def format_paper_for_slack(paper):
     """論文情報をSlack用にフォーマットする"""
     try:
-        # 要約の改行を整形
+        # 論文タイトルと要約の改行を整形
+        title = ' '.join(paper.title.split())
         summary = ' '.join(paper.summary.split())
         
-        # タイトルと要約を日本語に翻訳
-        try:
-            translator = Translator()
-            translated_title = translator.translate(paper.title, dest='ja').text
-            translated_summary = translator.translate(summary, dest='ja').text
-            logger.info("論文タイトルと要約を日本語に翻訳しました")
-        except Exception as e:
-            logger.error(f"翻訳中にエラーが発生しました: {e}")
-            translated_title = paper.title
+        # 設定に基づいて翻訳を行う
+        if USE_TRANSLATION:
+            try:
+                translator = Translator()
+                translated_title = translator.translate(title, dest='ja').text
+                translated_summary = translator.translate(summary, dest='ja').text
+                print(f"{get_timestamp()} - 論文タイトルと要約を日本語に翻訳しました")
+            except Exception as e:
+                print(f"{get_timestamp()} - 翻訳中にエラーが発生しました: {e}")
+                translated_title = title
+                translated_summary = summary
+        else:
+            print(f"{get_timestamp()} - 翻訳設定が無効なため、原文のまま表示します")
+            translated_title = title
             translated_summary = summary
         
         # Slack用のメッセージのブロックを作成
@@ -200,7 +180,7 @@ def format_paper_for_slack(paper):
                 },
             ])
         else:
-            # ChatGPTを使用しない場合は翻訳した概要を表示（文字数制限なし）
+            # ChatGPTを使用しない場合は翻訳した概要を表示
             blocks.append({
                 "type": "section",
                 "text": {
@@ -227,7 +207,7 @@ def format_paper_for_slack(paper):
         message = {"blocks": blocks}
         return message
     except Exception as e:
-        logger.error("論文のフォーマット中にエラーが発生しました: %s", e)
+        print(f"{get_timestamp()} - 論文のフォーマット中にエラーが発生しました: {e}")
         return None
 
 def send_to_slack(message):
@@ -235,53 +215,49 @@ def send_to_slack(message):
     try:
         # URLが設定されているか確認
         if not SLACK_WEBHOOK_URL:
-            print("Slack webhook URLが設定されていません。WEBHOOK_URL環境変数またはconfig.yamlを確認してください。")
+            print(f"{get_timestamp()} - Slack webhook URLが設定されていません。WEBHOOK_URL環境変数またはconfig.yamlを確認してください。")
             return None
             
         webhook = WebhookClient(SLACK_WEBHOOK_URL)
         response = webhook.send(**message)
-        print(f"Slackへの送信が完了しました。ステータスコード: {response.status_code}")
+        print(f"{get_timestamp()} - Slackへの送信が完了しました。ステータスコード: {response.status_code}")
         return response
     except SlackApiError as e:
-        logger.error("Slackへの送信中にAPIエラーが発生しました: %s", e)
+        print(f"{get_timestamp()} - Slackへの送信中にAPIエラーが発生しました: {e}")
         return None
     except Exception as e:
-        logger.error("Slackへの送信中に予期しないエラーが発生しました: %s", e)
-        print(f"エラーの詳細: {e}")
+        print(f"{get_timestamp()} - Slackへの送信中に予期しないエラーが発生しました: {e}")
         return None
 
 def main():
     """メイン関数"""
-    logger.info("ArXiv to Slack 処理を開始します")
+    print(f"{get_timestamp()} - ArXiv to Slack 処理を開始します")
     papers = search_ai_papers()
     
     if not papers:
-        logger.warning("論文が見つかりませんでした。")
+        print(f"{get_timestamp()} - 論文が見つかりませんでした。")
         return
     
     # フィルタされた論文からランダムに1件選択する
     top_paper = random.choice(papers)
-    logger.info("ランダムに選択された論文: %s", top_paper.title)
-    
-    # 引用数を表示する必要がなくなったので、取得しない
-    # citation_count = get_citation_count(top_paper)
-    # top_paper.citation_count = citation_count
+    print(f"{get_timestamp()} - ランダムに選択された論文: {top_paper.title}")
     
     # ChatGPT APIを使用して論文を処理
     if USE_CHATGPT and CHATGPT_API_KEY:
         try:
-            logger.info("ChatGPT APIを使用して論文を処理しています...")
+            print(f"{get_timestamp()} - ChatGPT APIを使用して論文を処理しています...")
             chatgpt_result = process_paper_with_chatgpt(
                 top_paper, 
                 CHATGPT_API_KEY,
                 model=CHATGPT_MODEL,
                 temperature=CHATGPT_TEMPERATURE
             )
-            message = format_paper_for_slack(chatgpt_result)
+            top_paper.chatgpt_result = chatgpt_result
         except Exception as e:
-            logger.error(f"ChatGPTによる処理中にエラーが発生しました: {e}")
-    else:
-        message = format_paper_for_slack(top_paper)
+            print(f"{get_timestamp()} - ChatGPTによる処理中にエラーが発生しました: {e}")
+    
+    # Slackメッセージを作成
+    message = format_paper_for_slack(top_paper)
 
     # メッセージのブロックの先頭に文章を追加
     if message and "blocks" in message:
@@ -300,8 +276,8 @@ if __name__ == "__main__":
     try:
         main()
     except KeyboardInterrupt:
-        logger.info("ユーザーによって処理が中断されました")
+        print(f"{get_timestamp()} - ユーザーによって処理が中断されました")
         sys.exit(0)
     except Exception as e:
-        logger.critical("予期しないエラーが発生しました: %s", e, exc_info=True)
+        print(f"{get_timestamp()} - 予期しないエラーが発生しました: {e}")
         sys.exit(1)
