@@ -1,0 +1,49 @@
+# 既定のignoreルール
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+
+# 仮想環境
+venv/
+.env
+env/
+ENV/
+.venv/
+
+# ログファイル
+*.log
+logs/
+log/
+
+# キャッシュディレクトリ
+.pytest_cache/
+.coverage
+htmlcov/
+.tox/
+.nox/
+
+# IDE固有のファイル
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+.DS_Store
