@@ -12,7 +12,7 @@ def send_to_slack(message):
     config = get_config()
     
     # 環境変数名を設定ファイルから取得
-    webhook_env_var = config.get('slack', {}).get('webhook_url_env', 'WEBHOOK_URL')
+    webhook_env_var = config.get('slack', {}).get('webhook_url_env', 'SLACK_WEBHOOK_URL')
     
     # 環境変数からWebhook URLを取得
     webhook_url = os.environ.get(webhook_env_var)

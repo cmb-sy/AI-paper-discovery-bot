@@ -6,7 +6,6 @@ from src.config_loader import get_config
 from src.utils import print_with_timestamp
 
 def process_paper_with_chatgpt(paper):
-    """論文をChatGPT APIで処理する"""
     config = get_config()
     
     # ChatGPT設定の取得

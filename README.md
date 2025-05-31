@@ -14,14 +14,18 @@ This project automatically retrieves the latest AI-related papers from the ArXiv
 
 ### Installation
 
-```bash
-# Create and activate virtual environment
-python3 -m venv venv
-source venv/bin/activate  # macOS/Linux
-# or venv\Scripts\activate  # Windows
+[uv](https://github.com/astral-sh/uv) is a fast Python package installer and resolver.
 
-# Install dependencies
-pip install -r requirements.txt
+```bash
+# Install uv if not already installed
+brew install uv
+# Or using pip
+pip install uv
+
+# Setup virtual environment and install dependencies in one go
+uv venv
+source .venv/bin/activate
+uv pip install -r requirements.txt
 ```
 
 ### Configuration

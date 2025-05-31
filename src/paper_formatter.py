@@ -6,20 +6,15 @@ from .config_loader import get_config
 from .utils import print_with_timestamp
 
 def clean_text(text):
-    """テキストから不要な改行を削除し、整形する"""
     return ' '.join(text.split())
 
 def translate_text(text, dest_lang='ja'):
-    """テキストを指定された言語に翻訳する"""
     config = get_config()
-    
-    # 翻訳設定を確認
     use_translation = config.get('translation', {}).get('enabled', True)
     
     if not use_translation:
         print_with_timestamp("翻訳設定が無効なため、原文のまま表示します")
         return text
-        
     try:
         translator = Translator()
         translated = translator.translate(text, dest=dest_lang).text
@@ -39,8 +34,13 @@ def format_paper_for_slack(paper):
         title = clean_text(paper.title)
         summary = clean_text(paper.summary)
         
-        # 設定に基づいて翻訳を行う
-        if use_translation:
+        # ChatGPTを使う場合は翻訳しない
+        if use_chatgpt:
+            print_with_timestamp("ChatGPTを使用するため、原文のまま表示します")
+            translated_title = title
+            translated_summary = summary
+        # ChatGPTを使わない場合は設定に基づいて翻訳を行う
+        elif use_translation:
             try:
                 translator = Translator()
                 translated_title = translator.translate(title, dest='ja').text
@@ -67,7 +67,6 @@ def format_paper_for_slack(paper):
             },
         ]
         
-        # ChatGPTによる処理結果があれば追加
         chatgpt_result = getattr(paper, 'chatgpt_result', None)
         if use_chatgpt and chatgpt_result:
             blocks.extend([
@@ -75,23 +74,9 @@ def format_paper_for_slack(paper):
                     "type": "section",
                     "text": {
                         "type": "mrkdwn",
-                        "text": f"*ChatGPTによる要約:*\n{chatgpt_result.get('summary', '')}"
+                        "text": f"{chatgpt_result}"
                     }
-                },
-                {
-                    "type": "section",
-                    "text": {
-                        "type": "mrkdwn",
-                        "text": f"*重要性:*\n{chatgpt_result.get('importance', '')}"
-                    }
-                },
-                {
-                    "type": "section",
-                    "text": {
-                        "type": "mrkdwn",
-                        "text": f"*応用可能性:*\n{chatgpt_result.get('applications', '')}"
-                    }
-                },
+                }
             ])
         else:
             # ChatGPTを使用しない場合は翻訳した概要を表示
@@ -103,7 +88,6 @@ def format_paper_for_slack(paper):
                 }
             })
         
-        # リンクと区切り線を追加
         blocks.extend([
             {
                 "type": "section",
