@@ -1,7 +1,3 @@
-# slack設定
-slack:
-  webhook_url: "https://hooks.slack.com/services/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"
-
 # ChatGPT設定
 chatgpt:
   use_chatgpt: false
@@ -12,6 +8,10 @@ chatgpt:
 # 翻訳設定
 translation:
   enabled: false # 論文を日本語に翻訳するかどうか
+
+# Slack設定
+slack:
+  webhook_url_env: "WEBHOOK_URL" # 環境変数からWebhook URLを読み込む
 
 # arXiv設定
 arxiv:

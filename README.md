@@ -1,54 +1,56 @@
-# AI 論文推薦システム
+# AI Paper Recommendation System
 
-このプロジェクトは、ArXiv API から AI 関連の最新論文を自動的に取得し、引用数や出版日などの情報とともに Slack へ通知するシステムです。
+This project automatically retrieves the latest AI-related papers from the ArXiv API and sends notifications to Slack with information such as citation counts and publication dates.
 
-## 主な機能
+## Key Features
 
-- **自動論文収集**: ArXiv API から最新の AI 関連論文を取得
-- **引用数表示**: Semantic Scholar API を使用して論文の引用数を表示
-- **スマートフィルタリング**: キーワード、引用数、出版日に基づく論文の絞り込み
-- **定期的な自動通知**: GitHub Actions による毎日の自動実行
-- **カスタマイズ可能**: 検索カテゴリ、フィルター条件などを柔軟に設定可能
+- **Automated Paper Collection**: Retrieves the latest AI-related papers from ArXiv API
+- **Citation Display**: Shows citation counts using the Semantic Scholar API
+- **Smart Filtering**: Filters papers based on keywords, citation counts, and publication dates
+- **Scheduled Notifications**: Automatic daily execution via GitHub Actions
+- **Customizable**: Flexible settings for search categories, filter conditions, etc.
 
-## スタート
+## Getting Started
 
-### 前提条件
-
-- Python 3.6 以上
-- Slack ワークスペース（Webhook URL 作成のため）
-- GitHub アカウント（自動実行のため）
-
-### インストール
+### Installation
 
 ```bash
-# リポジトリをクローン
-git clone https://github.com/yourusername/essay-recommend.git
-cd essay-recommend
-
-# 仮想環境を作成・有効化
+# Create and activate virtual environment
 python3 -m venv venv
 source venv/bin/activate  # macOS/Linux
-# または venv\Scripts\activate  # Windows
+# or venv\Scripts\activate  # Windows
 
-# 依存パッケージをインストール
+# Install dependencies
 pip install -r requirements.txt
 ```
 
-### 設定
+### Configuration
 
-1. **Slack Webhook URL の取得**
+1. **Obtain Slack Webhook URL**
 
-   - Slack ワークスペースで新しいアプリを作成
-   - 「Incoming Webhooks」を有効化
-   - Webhook URL を取得
+   - Create a new app in your Slack workspace
+   - Enable "Incoming Webhooks"
+   - Get the Webhook URL
 
-2. **設定ファイルの編集**
-   - `config.yaml`を開き、フィルタリング設定などを確認・編集
-   - ローカル実行の場合は`webhook_url`に Slack Webhook URL を設定
+2. **Store Secrets Securely**
 
-### 実行
+   - For local execution: Create a `.env` file with your Webhook URL:
+     ```
+     WEBHOOK_URL="your-webhook-url"
+     ```
+   - For GitHub Actions: Add the Webhook URL as a Repository Secret:
+     1. Go to your repository on GitHub
+     2. Navigate to "Settings" → "Secrets and variables" → "Actions"
+     3. Click "New repository secret"
+     4. Name: `WEBHOOK_URL`, Value: your webhook URL
+     5. Click "Add secret"
+
+3. **Edit Configuration File**
+   - Open `config.yaml` to review and customize filtering settings
+
+### Execution
 
 ```bash
-# スクリプトを実行
-python arxiv_to_slack.py
+# Run the script
+python main.py
 ```

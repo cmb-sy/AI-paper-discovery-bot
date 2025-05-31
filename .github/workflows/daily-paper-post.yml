@@ -2,14 +2,12 @@ name: 論文自動投稿
 
 on:
   schedule:
-    # 毎日UTC 00:00 (日本時間9:00)に実行
-    - cron: "0 0 * * *"
-  # 手動実行も可能にする
+    # - cron: "0 0 * * *"
+    - cron: "0 0 */2 * *"
   workflow_dispatch:
-  # push時にもテスト実行
   push:
     branches:
-      - main # mainブランチへのプッシュ時に実行
+      - main
 
 jobs:
   post-papers:
@@ -32,19 +30,19 @@ jobs:
       - name: 設定ファイルを更新
         run: |
           # GitHub Secretsから設定ファイルに書き込み
-          sed -i "s|webhook_url:.*|webhook_url: \"${{ secrets.SLACK_WEBHOOK_URL }}\"|g" config.yaml
+          sed -i "s|webhook_url:.*|webhook_url: \"${{ secrets.SLACK_WEBHOOKS }}\"|g" config.yaml
 
           # OpenAI API Key設定（存在する場合）
-          if [ -n "${{ secrets.OPENAI_API_KEY }}" ]; then
-            echo "ChatGPT機能を有効化します"
-            sed -i "s|use_chatgpt: false|use_chatgpt: true|g" config.yaml
-            sed -i "s|api_key: \"\"|api_key: \"${{ secrets.OPENAI_API_KEY }}\"|g" config.yaml
-          fi
+          # if [ -n "" ]; then
+          #   echo "ChatGPT機能を有効化します"
+          #   sed -i "s|use_chatgpt: false|use_chatgpt: true|g" config.yaml
+          #   sed -i "s|api_key: \"\"|api_key: \""|g" config.yaml
+          # fi
 
       - name: 論文投稿スクリプトの実行
         env:
-          WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
-          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+          WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOKS }}
+          OPENAI_API_KEY: ""
         run: |
           # push時の実行はテストモードとして扱う
           if [ "${{ github.event_name }}" = "push" ]; then
