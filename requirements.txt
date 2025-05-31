@@ -4,3 +4,4 @@ googletrans==4.0.0-rc1
 PyYAML
 arxiv
 semanticscholar
+openai>=1.0.0

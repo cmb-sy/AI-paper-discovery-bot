@@ -1,47 +1,37 @@
-# AIの論文取得とSlack通知の設定ファイル
-
-# Slack設定
-# 注意: 実際のWebhook URLは.gitignoreに追加するか、GitHub Secretsを使用してください
+# slack設定
 slack:
-  webhook_url: "YOUR_SLACK_WEBHOOK_URL" # GitHub Actionsでは自動的に置換されます
+  webhook_url: "https://hooks.slack.com/services/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"
+
+# ChatGPT設定
+chatgpt:
+  use_chatgpt: false
+  api_key: ""
+  model: "gpt-3.5-turbo"
+  temperature: 0.7
 
 # arXiv設定
 arxiv:
-  # 検索するAI関連のカテゴリ
   categories:
-    - "cs.AI"    # 人工知能
-    - "cs.CL"    # 計算言語学・自然言語処理
-    - "cs.CV"    # コンピュータビジョン
-    - "cs.LG"    # 機械学習
-    - "cs.NE"    # ニューラルネットワークとニューラルコンピューティング
-    - "cs.RO"    # ロボティクス
-    - "stat.ML"  # 機械学習（統計）
-  
-  # 最大取得論文数
-  max_results: 15
-  
-  # 何日前の論文を検索するか（1=昨日な）
-  days_back: 1
-  
-  # フィルタリング設定
+    - "cs.AI" # 人工知能
+    - "cs.CL" # 計算言語学・自然言語処理
+    - "cs.CV" # コンピュータビジョン
+    - "cs.LG" # 機械学習
+    - "cs.NE" # ニューラルネットワークとニューラルコンピューティング
+    - "cs.RO" # ロボティクス
+    - "stat.ML" # 機械学習（統計）
+  max_results: 100
   filters:
     # 過去X年以内の論文に絞り込む
-    max_years_old: 3
-    
-    # キーワードフィルター（いずれかが含まれる論文）
+    max_years_old: 5
+
     keywords:
       - "transformer"
       - "attention"
       - "LLM"
       - "large language model"
-      - "diffusion"
       - "generative"
       - "multi-modal"
       - "multimodal"
       - "foundation model"
-    
-    # 最低引用数（これ以上の引用がある論文）
-    min_citations: 10
-    
-    # フィルター条件の適用方法（"or"=キーワードまたは引用数、"and"=キーワードと引用数の両方）
+
     filter_logic: "or"

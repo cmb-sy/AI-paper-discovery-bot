@@ -3,9 +3,13 @@ name: 論文自動投稿
 on:
   schedule:
     # 毎日UTC 00:00 (日本時間9:00)に実行
-    - cron: '0 0 * * *'
+    - cron: "0 0 * * *"
   # 手動実行も可能にする
   workflow_dispatch:
+  # push時にもテスト実行
+  push:
+    branches:
+      - main # mainブランチへのプッシュ時に実行
 
 jobs:
   post-papers:
@@ -13,27 +17,42 @@ jobs:
     steps:
       - name: リポジトリのチェックアウト
         uses: actions/checkout@v3
-        
+
       - name: Python環境のセットアップ
         uses: actions/setup-python@v4
         with:
-          python-version: '3.10'
-          cache: 'pip'
-          
+          python-version: "3.10"
+          cache: "pip"
+
       - name: 依存パッケージのインストール
         run: |
           python -m pip install --upgrade pip
           pip install -r requirements.txt
-          
-      - name: Slack Webhook URLを設定
+
+      - name: 設定ファイルを更新
         run: |
           # GitHub Secretsから設定ファイルに書き込み
           sed -i "s|webhook_url:.*|webhook_url: \"${{ secrets.SLACK_WEBHOOK_URL }}\"|g" config.yaml
-        
+
+          # OpenAI API Key設定（存在する場合）
+          if [ -n "${{ secrets.OPENAI_API_KEY }}" ]; then
+            echo "ChatGPT機能を有効化します"
+            sed -i "s|use_chatgpt: false|use_chatgpt: true|g" config.yaml
+            sed -i "s|api_key: \"\"|api_key: \"${{ secrets.OPENAI_API_KEY }}\"|g" config.yaml
+          fi
+
       - name: 論文投稿スクリプトの実行
+        env:
+          WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
         run: |
+          # push時の実行はテストモードとして扱う
+          if [ "${{ github.event_name }}" = "push" ]; then
+            echo "プッシュによるテスト実行モードを有効化します"
+            export TEST_MODE=true
+          fi
           python arxiv_to_slack.py
-        
+
       - name: 実行ログのアップロード
         if: always()
         uses: actions/upload-artifact@v3
