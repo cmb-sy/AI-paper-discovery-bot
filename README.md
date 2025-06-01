@@ -14,8 +14,6 @@ This project automatically retrieves the latest AI-related papers from the ArXiv
 
 ### Installation
 
-[uv](https://github.com/astral-sh/uv) is a fast Python package installer and resolver.
-
 ```bash
 # Install uv if not already installed
 brew install uv
