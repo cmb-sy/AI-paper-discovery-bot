@@ -12,7 +12,7 @@ translation:
 # Slack設定
 slack:
   webhook_url_env: "WEBHOOK_URL" # 環境変数からWebhook URLを読み込む
-
+  test_mode: false
 # arXiv設定
 arxiv:
   categories:
