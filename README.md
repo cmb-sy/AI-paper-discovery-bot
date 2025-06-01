@@ -1,4 +1,4 @@
-# AI Paper Recommendation System
+# Outline
 
 This project automatically retrieves the latest AI-related papers from the ArXiv API and sends notifications to Slack with information such as citation counts and publication dates.
 
