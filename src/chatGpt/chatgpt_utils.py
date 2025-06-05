@@ -9,7 +9,7 @@ def process_paper_with_chatgpt(paper, api_key, model="gpt-3.5-turbo", temperatur
         title = ' '.join(paper.title.split())
         abstract = ' '.join(paper.summary.split())
         
-        prompt = f"""以下の論文を日本語で要約し、要点を以下のフォーマットに従って500~800文字で出力してください。
+        prompt = f"""以下の論文を日本語で要約し、要点を以下のフォーマットに従って800~1000文字で出力してください。
 
 タイトル: {title}
 アブストラクト:
@@ -23,7 +23,6 @@ def process_paper_with_chatgpt(paper, api_key, model="gpt-3.5-turbo", temperatur
 
 <結論>
 """
-        # API呼び出し
         completion = client.chat.completions.create(
             model=model,
             messages=[

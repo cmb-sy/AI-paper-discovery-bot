@@ -1,19 +1,18 @@
 # ChatGPT設定
 chatgpt:
-  use_chatgpt: false
-  api_key: ""
+  use_chatgpt: true
+  api_key: "CHATGPT_APIKEY"
   model: "gpt-3.5-turbo"
   temperature: 0.7
 
 # 翻訳設定
 translation:
-  enabled: false # 論文を日本語に翻訳するかどうか
+  enabled: false
 
 # Slack設定
 slack:
-  webhook_url_env: "WEBHOOK_URL" # 環境変数からWebhook URLを読み込む
+  webhook_url_env: "WEBHOOK_URL"
   test_mode: false
-# arXiv設定
 arxiv:
   categories:
     - "cs.AI" # 人工知能
@@ -25,10 +24,8 @@ arxiv:
     max_years_old: 5 # 過去X年以内の論文に絞り込む
 
     keywords:
-      - "transformer"
-      - "attention"
       - "LLM"
-      - "large language model"
-      - "generative"
+      - "RAG"
+      - "Finetuning"
 
     filter_logic: "or"
