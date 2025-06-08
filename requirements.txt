@@ -6,3 +6,4 @@ arxiv
 python-dotenv
 google
 googletrans
+google-generativeai>=0.3.0
