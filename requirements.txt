@@ -3,5 +3,6 @@ slack_sdk
 googletrans-py
 PyYAML
 arxiv
-openai
 python-dotenv
+google
+googletrans

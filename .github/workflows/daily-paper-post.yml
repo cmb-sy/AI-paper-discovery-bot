@@ -2,7 +2,7 @@ name: Daily Paper Recommendation
 
 on:
   schedule:
-    - cron: "0 0 * * 5"
+    - cron: "0 12 * * 4"
   workflow_dispatch:
   push:
     branches:
@@ -30,12 +30,13 @@ jobs:
       - name: Run paper recommendation script
         env:
           WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOKS }}
-          CHATGPT_APIKEY: ${{ secrets.CHATGPT_APIKEY }}
+          GEMINI_APIKEY: ${{ secrets.GEMINI_APIKEY }}
           GITHUB_EVENT_NAME: ${{ github.event_name }}
         run: |
           if [ "$GITHUB_EVENT_NAME" == "push" ]; then
             echo "Pushイベントのため、テストモードで実行します"
             sed -i 's/test_mode: false/test_mode: true/' config.yaml
           fi
-          sed -i "s/api_key: \"CHATGPT_APIKEY\"/api_key: \"${CHATGPT_APIKEY}\"/" config.yaml
+          sed -i 's/use_gemini: false/use_gemini: true/' config.yaml
+          sed -i "s/gemini_api_key: \"GEMINI_APIKEY\"/gemini_api_key: \"${GEMINI_APIKEY}\"/" config.yaml
           python main.py

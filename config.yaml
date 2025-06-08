@@ -1,8 +1,8 @@
 # ChatGPT設定
-chatgpt:
-  use_chatgpt: true
-  api_key: "CHATGPT_APIKEY"
-  model: "gpt-3.5-turbo"
+gemini:
+  use_gemini: true
+  gemini_api_key: "GEMINI_APIKEY"
+  model: "models/gemini-1.5-pro-latest"
   temperature: 0.7
 
 # 翻訳設定
@@ -22,10 +22,8 @@ arxiv:
   max_results: 100
   filters:
     max_years_old: 5 # 過去X年以内の論文に絞り込む
-
     keywords:
       - "LLM"
       - "RAG"
       - "Finetuning"
-
     filter_logic: "or"
