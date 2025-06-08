@@ -8,13 +8,12 @@ from src.utils import print_with_timestamp
 
 def process_paper_with_gemini(paper):
     config = get_config()
-    use_gemini = config.get('gemini', {}).get('use_gemini', False)
     api_key_env = config.get('gemini', {}).get('gemini_api_key_env', 'GEMINI_API_KEY')
     api_key = os.environ.get(api_key_env, '')
     model_name = config.get('gemini', {}).get('model', 'models/gemini-1.5-pro-latest')
     temperature = config.get('gemini', {}).get('temperature', 0.7)
 
-    if not use_gemini or not api_key:
+    if not api_key:
         return paper
 
     try:

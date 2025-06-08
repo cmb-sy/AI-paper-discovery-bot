@@ -25,12 +25,15 @@ def translate_text(text, dest_lang='ja'):
 def format_paper_for_slack(paper):
     config = get_config()
     use_translation = config.get('translation', {}).get('enabled', True)
-    use_gemini = config.get('gemini', {}).get('use_gemini', False)
+    llm_provider = config.get('llm', {}).get('provider', 'none')
+    
     try:
         title = clean_text(paper.title)
         summary = clean_text(paper.summary)
-        if use_gemini:
-            print_with_timestamp("Geminiを使用するため、原文のまま表示します")
+        
+        # LLMを使用する場合は翻訳をスキップ
+        if llm_provider != "none":
+            print_with_timestamp(f"{llm_provider}を使用するため、原文のまま表示します")
             translated_title = title
             translated_summary = summary
         elif use_translation:
@@ -57,18 +60,30 @@ def format_paper_for_slack(paper):
                 }
             },
         ]
-        gemini_result = getattr(paper, 'gemini_result', None)
-        if use_gemini:
-            # Geminiの結果がある場合
-            if gemini_result:
-                # Geminiエラーメッセージがある場合（"※"で始まる場合はエラー）
-                if gemini_result.startswith("※"):
+        
+        # LLMプロバイダに基づく処理
+        llm_result = None
+        llm_error = False
+        
+        if llm_provider == "gemini":
+            llm_result = getattr(paper, 'gemini_result', None)
+            llm_name = "Gemini"
+        elif llm_provider == "chatgpt":
+            llm_result = getattr(paper, 'chatgpt_result', None)
+            llm_name = "ChatGPT"
+        
+        if llm_provider != "none":
+            # LLMの結果がある場合
+            if llm_result:
+                # エラーメッセージがある場合（"※"で始まる場合はエラー）
+                if llm_result.startswith("※"):
+                    llm_error = True
                     blocks.extend([
                         {
                             "type": "section",
                             "text": {
                                 "type": "mrkdwn",
-                                "text": f"*Gemini処理エラー:*\n{gemini_result}"
+                                "text": f"*{llm_name}処理エラー:*\n{llm_result}"
                             }
                         },
                         {
@@ -86,11 +101,11 @@ def format_paper_for_slack(paper):
                             "type": "section",
                             "text": {
                                 "type": "mrkdwn",
-                                "text": f"{gemini_result}"
+                                "text": f"*{llm_name}による要約:*\n{llm_result}"
                             }
                         }
                     ])
-            # Gemini結果がない場合は通常の概要を表示
+            # LLM結果がない場合は通常の概要を表示
             else:
                 blocks.append({
                     "type": "section",
@@ -99,7 +114,7 @@ def format_paper_for_slack(paper):
                         "text": f"*概要:*\n{translated_summary}"
                     }
                 })
-        # Geminiを使用しない場合
+        # LLMを使用しない場合
         else:
             blocks.append({
                 "type": "section",

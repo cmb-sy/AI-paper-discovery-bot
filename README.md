@@ -36,19 +36,28 @@ uv pip install -r requirements.txt
 
 2. **Store Secrets Securely**
 
-   - For local execution: Create a `.env` file with your Webhook URL:
+   - For local execution: Create a `.env` file with your credentials:
      ```
-     WEBHOOK_URL="your-webhook-url"
+     SLACK_WEBHOOKS="your-slack-webhook-url"
+     GEMINI_API_KEY="your-gemini-api-key"        # Optional: needed for Gemini
+     OPENAI_API_KEY="your-openai-api-key"        # Optional: needed for ChatGPT
      ```
-   - For GitHub Actions: Add the Webhook URL as a Repository Secret:
+   - For GitHub Actions: Add the secrets to your Repository:
      1. Go to your repository on GitHub
      2. Navigate to "Settings" → "Secrets and variables" → "Actions"
      3. Click "New repository secret"
-     4. Name: `WEBHOOK_URL`, Value: your webhook URL
-     5. Click "Add secret"
+     4. Add the following secrets:
+        - `SLACK_WEBHOOKS`: Your Slack webhook URL
+        - `GEMINI_API_KEY`: Your Google Gemini API key (optional)
+        - `OPENAI_API_KEY`: Your OpenAI API key (optional)
+     5. Click "Add secret" for each
 
 3. **Edit Configuration File**
    - Open `config.yaml` to review and customize filtering settings
+   - Choose your LLM provider by setting `llm.provider` to one of:
+     - `gemini`: Use Google's Gemini for paper summarization
+     - `chatgpt`: Use OpenAI's ChatGPT for paper summarization
+     - `none`: Don't use any AI summarization
 
 ### Execution
 

@@ -31,9 +31,11 @@ jobs:
         env:
           SLACK_WEBHOOKS: ${{ secrets.SLACK_WEBHOOKS }}
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
           GITHUB_EVENT_NAME: ${{ github.event_name }}
         run: |
           if [ "$GITHUB_EVENT_NAME" == "push" ]; then
             sed -i 's/test_mode: false/test_mode: true/' config.yaml
+            sed -i 's/provider: "gemini"/provider: "none"/' config.yaml
           fi
           python main.py

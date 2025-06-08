@@ -1,4 +1,18 @@
 # LLM settings
+llm:
+  provider: "gemini" # "gemini", "chatgpt", または "none" (LLMを使用しない)
+
+gemini:
+  gemini_api_key_env: "GEMINI_API_KEY"
+  model: "models/gemini-1.5-pro-latest"
+  temperature: 0.7
+
+chatgpt:
+  openai_api_key_env: "OPENAI_API_KEY"
+  model: "gpt-4o"
+  temperature: 0.7
+
+# translation settingsttings
 gemini:
   use_gemini: true
   gemini_api_key_env: "GEMINI_API_KEY"
