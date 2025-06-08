@@ -1,6 +1,6 @@
 # LLM settings
 gemini:
-  use_gemini: false
+  use_gemini: true
   gemini_api_key_env: "GEMINI_API_KEY"
   model: "models/gemini-1.5-pro-latest"
   temperature: 0.7

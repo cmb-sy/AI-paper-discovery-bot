@@ -58,16 +58,48 @@ def format_paper_for_slack(paper):
             },
         ]
         gemini_result = getattr(paper, 'gemini_result', None)
-        if use_gemini and gemini_result:
-            blocks.extend([
-                {
+        if use_gemini:
+            # Geminiの結果がある場合
+            if gemini_result:
+                # Geminiエラーメッセージがある場合（"※"で始まる場合はエラー）
+                if gemini_result.startswith("※"):
+                    blocks.extend([
+                        {
+                            "type": "section",
+                            "text": {
+                                "type": "mrkdwn",
+                                "text": f"*Gemini処理エラー:*\n{gemini_result}"
+                            }
+                        },
+                        {
+                            "type": "section",
+                            "text": {
+                                "type": "mrkdwn",
+                                "text": f"*元の概要:*\n{translated_summary}"
+                            }
+                        }
+                    ])
+                # 正常に要約された場合
+                else:
+                    blocks.extend([
+                        {
+                            "type": "section",
+                            "text": {
+                                "type": "mrkdwn",
+                                "text": f"{gemini_result}"
+                            }
+                        }
+                    ])
+            # Gemini結果がない場合は通常の概要を表示
+            else:
+                blocks.append({
                     "type": "section",
                     "text": {
                         "type": "mrkdwn",
-                        "text": f"{gemini_result}"
+                        "text": f"*概要:*\n{translated_summary}"
                     }
-                }
-            ])
+                })
+        # Geminiを使用しない場合
         else:
             blocks.append({
                 "type": "section",
