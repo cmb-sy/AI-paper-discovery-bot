@@ -30,7 +30,7 @@ jobs:
       - name: Run paper recommendation script
         env:
           WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOKS }}
-          GEMINI_APIKEY: ${{ secrets.GEMINI_APIKEY }}
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
           GITHUB_EVENT_NAME: ${{ github.event_name }}
         run: |
           if [ "$GITHUB_EVENT_NAME" == "push" ]; then
@@ -38,5 +38,5 @@ jobs:
             sed -i 's/test_mode: false/test_mode: true/' config.yaml
           fi
           sed -i 's/use_gemini: false/use_gemini: true/' config.yaml
-          sed -i "s/gemini_api_key: \"GEMINI_APIKEY\"/gemini_api_key: \"${GEMINI_APIKEY}\"/" config.yaml
+          sed -i "s/gemini_api_key: \"GEMINI_API_KEY\"/gemini_api_key: \"${GEMINI_API_KEY}\"/" config.yaml
           python main.py

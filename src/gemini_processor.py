@@ -1,6 +1,7 @@
 """
 Gemini 1.5 Proによる論文処理を行うモジュール
 """
+import os
 import google.generativeai as genai
 from src.config_loader import get_config
 from src.utils import print_with_timestamp
@@ -8,7 +9,8 @@ from src.utils import print_with_timestamp
 def process_paper_with_gemini(paper):
     config = get_config()
     use_gemini = config.get('gemini', {}).get('use_gemini', False)
-    api_key = config.get('gemini', {}).get('gemini_api_key', '')
+    api_key_env = config.get('gemini', {}).get('gemini_api_key_env', 'GEMINI_APIKEY')
+    api_key = os.environ.get(api_key_env, '')
     model_name = config.get('gemini', {}).get('model', 'models/gemini-1.5-pro-latest')
     temperature = config.get('gemini', {}).get('temperature', 0.7)
 

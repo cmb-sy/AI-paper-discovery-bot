@@ -1,24 +1,22 @@
-# ChatGPT設定
+# LLM settings
 gemini:
   use_gemini: true
-  gemini_api_key: "GEMINI_APIKEY"
+  gemini_api_key_env: "GEMINI_API_KEY"
   model: "models/gemini-1.5-pro-latest"
   temperature: 0.7
 
-# 翻訳設定
+# translation settings
 translation:
   enabled: false
 
-# Slack設定
+# Slack settings
 slack:
-  webhook_url_env: "WEBHOOK_URL"
+  webhook_url_env: "SLACK_WEBHOOKS"
   test_mode: false
 arxiv:
   categories:
-    - "cs.AI" # 人工知能
-    - "cs.LG" # 機械学習
-    - "cs.NE" # ニューラルネットワークとニューラルコンピューティング
-    - "stat.ML" # 機械学習（統計）
+    - "cs.AI" # artificial intelligence
+    - "cs.LG" # machine learning
   max_results: 100
   filters:
     max_years_old: 5 # 過去X年以内の論文に絞り込む
