@@ -1,6 +1,6 @@
 # LLM settings
 gemini:
-  use_gemini: true
+  use_gemini: false
   gemini_api_key_env: "GEMINI_API_KEY"
   model: "models/gemini-1.5-pro-latest"
   temperature: 0.7
@@ -12,7 +12,7 @@ translation:
 # Slack settings
 slack:
   webhook_url_env: "SLACK_WEBHOOKS"
-  test_mode: false
+  test_mode: t
 arxiv:
   categories:
     - "cs.AI" # artificial intelligence
@@ -24,4 +24,5 @@ arxiv:
       - "LLM"
       - "RAG"
       - "Finetuning"
+      - "fine-tuning"
     filter_logic: "or"
