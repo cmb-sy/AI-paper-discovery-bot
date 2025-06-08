@@ -1,10 +1,8 @@
-import logging
 from openai import OpenAI
 
 def process_paper_with_chatgpt(paper, api_key, model="gpt-3.5-turbo", temperature=0.7):        
     try:
         client = OpenAI(api_key=api_key)
-        
         # 論文情報を整形
         title = ' '.join(paper.title.split())
         abstract = ' '.join(paper.summary.split())

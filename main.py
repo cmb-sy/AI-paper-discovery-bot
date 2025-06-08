@@ -10,8 +10,8 @@ def main():
     print_with_timestamp("ArXiv to Slack 処理を開始します")
     paper = get_random_paper()
     paper = process_paper_with_chatgpt(paper)
-    message = format_paper_for_slack(paper) # Slackメッセージを作成
-    message = add_greeting_to_message(message) # メッセージの先頭にあいさつを追加
+    message = format_paper_for_slack(paper)
+    message = add_greeting_to_message(message)
     send_to_slack(message)
 
 if __name__ == "__main__":
