@@ -72,7 +72,8 @@ def process_paper_with_chatgpt(paper):
         # PDFの最初と最後のページを取得
         pdf_content = extract_first_and_last_pages(paper)
         
-        prompt = f"""以下の論文を日本語で要約し、要点を以下のフォーマットに従って500~800文字で出力してください
+        prompt = f"""以下の論文を日本語で要約し、要点を以下のフォーマットに従って500~800文字で出力してください。
+必ずMarkdown見出し形式（## 見出し名）を使用してください。
 
 ## タイトル
 {title}
@@ -90,6 +91,8 @@ def process_paper_with_chatgpt(paper):
 {abstract}
 
 {pdf_content if pdf_content else ""}
+
+以下の形式で出力してください：
 
 ## アブストラクト
 

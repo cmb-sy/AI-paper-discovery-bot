@@ -66,7 +66,7 @@ def add_greeting_to_message(message):
             "type": "section",
             "text": {
                 "type": "mrkdwn",
-                "text": "*Hello💡💡 論文を紹介するので一読してね*"
+                "text": "Hello💡💡 論文を紹介するので一読してね"
             }
         })
     return message
