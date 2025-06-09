@@ -12,21 +12,12 @@ chatgpt:
   model: "gpt-4o"
   temperature: 0.7
 
-# translation settingsttings
-gemini:
-  use_gemini: true
-  gemini_api_key_env: "GEMINI_API_KEY"
-  model: "models/gemini-1.5-pro-latest"
-  temperature: 0.7
-
-# translation settings
-translation:
-  enabled: false
-
 # Slack settings
 slack:
   webhook_url_env: "SLACK_WEBHOOKS"
   test_mode: false
+
+# ArXiv settings
 arxiv:
   categories:
     - "cs.AI" # artificial intelligence
