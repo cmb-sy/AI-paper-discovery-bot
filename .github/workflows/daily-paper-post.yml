@@ -38,7 +38,6 @@ jobs:
         env:
           SLACK_WEBHOOKS: ${{ secrets.SLACK_WEBHOOKS }}
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
-          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
           GITHUB_EVENT_NAME: ${{ github.event_name }}
         run: |
           echo "Starting paper recommendation with improved error handling..."
