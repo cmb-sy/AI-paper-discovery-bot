@@ -74,7 +74,7 @@ def process_paper_with_gemini(paper):
         pdf_content = extract_first_and_last_pages(paper)
         
         prompt = f"""以下の論文を日本語で要約し、要点を以下のフォーマットに従って500~800文字で出力してください。
-必ずMarkdown見出し形式（## 見出し名）を使用してください。
+Slack用のフォーマットで出力してください（太文字は *テキスト* で囲み、区切り線は --- を使用）。
 
 ## タイトル
 {title}
@@ -95,15 +95,28 @@ def process_paper_with_gemini(paper):
 
 以下の形式で出力してください：
 
-## アブストラクト
+*📄 アブストラクト*
+内容をここに記載
 
-## 問題設定
+---
 
-## 提案手法
+*🎯 問題設定*
+内容をここに記載
 
-## 結果
+---
 
-## 結論
+*💡 提案手法*
+内容をここに記載
+
+---
+
+*📊 結果*
+内容をここに記載
+
+---
+
+*📝 結論*
+内容をここに記載
 """
         response = model.generate_content(
             prompt,
