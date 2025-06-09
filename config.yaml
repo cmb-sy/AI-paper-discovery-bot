@@ -4,7 +4,7 @@ llm:
 
 gemini:
   gemini_api_key_env: "GEMINI_API_KEY"
-  model: "models/gemini-1.5-pro-latest"
+  model: "models/gemini-2.0-flash"
   temperature: 0.7
 
 chatgpt:
@@ -15,7 +15,7 @@ chatgpt:
 # Slack settings
 slack:
   webhook_url_env: "SLACK_WEBHOOKS"
-  test_mode: false
+  test_mode: true # デバッグ用に一時的に有効化
 
 # ArXiv settings
 arxiv:
