@@ -73,7 +73,7 @@ def process_paper_with_gemini(paper):
         # PDFの最初と最後のページを取得
         pdf_content = extract_first_and_last_pages(paper)
         
-        prompt = f"""以下の論文を日本語で要約し、要点を以下のフォーマットに従って500~800文字で出力してください。
+        prompt = f"""以下の論文を日本語で要約し、要点を以下のフォーマットに従って400~700文字で出力してください。
 Slack用のフォーマットで出力してください（太文字は *テキスト* で囲み、区切り線は --- を使用）。
 
 ## タイトル
