@@ -15,7 +15,7 @@ chatgpt:
 # Slack settings
 slack:
   webhook_url_env: "SLACK_WEBHOOKS"
-  test_mode: true # デバッグ用に一時的に有効化
+  test_mode: false
 
 # ArXiv settings
 arxiv:

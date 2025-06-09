@@ -27,6 +27,13 @@ jobs:
           python -m pip install --upgrade pip
           pip install --use-pep517 -r requirements.txt
 
+      - name: Configure for push event (test mode)
+        if: github.event_name == 'push'
+        run: |
+          echo "Push event detected - enabling test mode and keeping Gemini API enabled"
+          sed -i 's/test_mode: false/test_mode: true/' config.yaml
+          echo "Test mode enabled, but keeping Gemini API for testing"
+
       - name: Run paper recommendation script
         env:
           SLACK_WEBHOOKS: ${{ secrets.SLACK_WEBHOOKS }}
@@ -34,8 +41,5 @@ jobs:
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
           GITHUB_EVENT_NAME: ${{ github.event_name }}
         run: |
-          if [ "$GITHUB_EVENT_NAME" == "push" ]; then
-            sed -i 's/test_mode: false/test_mode: true/' config.yaml
-            sed -i 's/provider: "gemini"/provider: "none"/' config.yaml
-          fi
+          echo "Starting paper recommendation with improved error handling..."
           python main.py
