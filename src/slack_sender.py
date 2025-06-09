@@ -8,6 +8,12 @@ from .config_loader import get_config
 from .utils import print_with_timestamp
 
 def send_to_slack(message):
+    """Slackにメッセージを送信します"""
+    # メッセージの事前チェック
+    if not message:
+        print_with_timestamp("送信するメッセージが空です。処理を中止します。")
+        return None
+    
     config = get_config()
     webhook_env_var = config.get('slack', {}).get('webhook_url_env', 'SLACK_WEBHOOKS')
     test_mode = config.get('slack', {}).get('test_mode', False)
@@ -35,7 +41,7 @@ def send_to_slack(message):
         if test_mode:
             print_with_timestamp("テストモードが有効なため、Slackへの実際の送信をスキップします。")
             print_with_timestamp("送信予定のメッセージ内容:")
-            if "blocks" in message:
+            if message and isinstance(message, dict) and "blocks" in message:
                 for block in message["blocks"]:
                     if block.get("type") == "section" and "text" in block:
                         text_content = block["text"].get("text", "")
@@ -55,7 +61,7 @@ def send_to_slack(message):
         
 def add_greeting_to_message(message):
     """メッセージにあいさつを追加する"""
-    if message and "blocks" in message:
+    if message and isinstance(message, dict) and "blocks" in message:
         message["blocks"].insert(0, {
             "type": "section",
             "text": {
