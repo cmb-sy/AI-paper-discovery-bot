@@ -19,21 +19,19 @@ def process_paper_with_gemini(paper):
     try:
         genai.configure(api_key=api_key)
         model = genai.GenerativeModel(model_name)
-        title = ' '.join(paper.title.split())
-        abstract = ' '.join(paper.summary.split())
         prompt = f"""以下の論文を日本語で要約し、要点を以下のフォーマットに従って800~1000文字で出力してください。
 
-タイトル: {title}
-アブストラクト:
-{abstract}
+## タイトル
 
-<問題設定>
+## アブストラクト
 
-<提案手法>
+## 問題設定
 
-<結果>
+## 提案手法
 
-<結論>
+## 結果
+
+## 結論
 """
         response = model.generate_content(
             prompt,

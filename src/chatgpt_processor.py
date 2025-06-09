@@ -29,13 +29,15 @@ def process_paper_with_chatgpt(paper):
 アブストラクト:
 {abstract}
 
-<問題設定>
+## アブストラクト
 
-<提案手法>
+## 問題設定
 
-<結果>
+## 提案手法
 
-<結論>
+## 結果
+
+## 結論
 """
         response = client.chat.completions.create(
             model=model_name,
